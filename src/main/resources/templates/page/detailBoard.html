@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/default}">
+<head>
+<title>게시글 상세</title>
+</head>
+<!-- index.html 고유 CSS 추가 -->
+<th:block layout:fragment="css">
+	<link rel="stylesheet" th:href="@{/css/page/detailBoard.css}">
+</th:block>
+
+<!-- index.html 고유 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script th:src="@{/js/page/detailBoard.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</th:block>
+
+<div layout:fragment="content">
+	<main role="main" class="container" style="width: 50%;">
+		<div class="page-header">
+			<h1>게시글 상세</h1>
+		</div>
+		<div class="starter-template">
+
+			<table class="table table-fixed w-auto" style="width: 60%">
+				<tbody>
+					<tr>
+						<th class="col-md-2">제목</th>
+						<td class="col-md-9" th:text="${boardInfo.title}"></td>
+					</tr>
+					<tr>
+						<th class="col-md-2">작성자</th>
+						<td class="col-md-9" th:text="${boardInfo.writer}"></td>
+					</tr>
+					<tr>
+						<th class="col-md-2">작성일</th>
+						<td class="col-md-9" th:inline="text">[[${#temporals.format(boardInfo.createdAt,
+							'yyyy-MM-dd HH:mm')}]]</td>
+					</tr>
+					<tr>
+						<th class="col-md-2">본문 내용</th>
+						<td style="white-space:pre-wrap" class="col-md-9" th:text="${boardInfo.contents}"></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- 수정/삭제 -->
+			<div class="btn_wrap text-center">
+				<div>
+					<a class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
+					<a class="btn btn-primary" onclick="chkPassword()">수정</a>	
+				</div>
+			</div>
+			<div class="btn_wrap text-center" style="float:right;">
+				<div>
+					<a th:href="@{'/'}" class="btn btn-primary"> 목록 </a>
+				</div>
+			</div>
+			
+		</div>
+	</main>
+	<script th:inline="javascript">
+    function chkPassword() {
+        var boardInfo = [[${boardInfo}]];
+       	var deletePasswd = prompt("게시글의 비밀번호를 입력하세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~16자리 입니다.)", "");
+       	if (deletePasswd == ""){
+       		alert("비밀번호를 입력해주세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~15자리 입니다.)")
+     		chkPassword();
+       	} else if (deletePasswd == null) {
+       		return false;
+       	} else{
+       		if (boardInfo.password == deletePasswd) {
+       			axios({
+       				method: 'get',
+       				url: '/board/' + boardInfo.id +'/edit',
+       				params: {}
+       			})
+       			.then(function(response) {
+       				console.log(response);
+       				window.location.href = response.request.responseURL;
+       			})
+       			.catch(function(error) {
+       				console.log(error);
+       			})
+       		} else {
+       			alert("일치하지 않는 비빌번호입니다. 비밀번호를 다시 입력해주세요.")
+   				chkPassword();
+       		}
+   		}
+    }
+	</script>
+	
+	<script th:inline="javascript">
+    function deleteBoard() {
+        var boardInfo = [[${boardInfo}]];
+       	var deletePasswd = prompt("게시글의 비밀번호를 입력하세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~16자리 입니다.)", "");
+       	if (deletePasswd == ""){
+       		alert("비밀번호를 입력해주세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~15자리 입니다.)")
+     		deleteBoard();
+       	} else if (deletePasswd == null) {
+       		return false;
+       	} else{
+       		if (boardInfo.password == deletePasswd) {
+       			if(confirm("게시글을 삭제하시겠습니까?")) {
+       				axios({
+       	   				method: 'post',
+       	   				url: '/board/' + boardInfo.id,
+       	   				params: {}
+       	   			})
+       	   			.then(function(response) {
+       	   				console.log(response);
+       	   				window.location.href = response.request.responseURL;
+       	   			})
+       	   			.catch(function(error) {
+       	   				console.log(error);
+       	   			})
+       			} else {
+       				return false;
+       			}
+       		} else {
+       			alert("일치하지 않는 비빌번호입니다. 비밀번호를 다시 입력해주세요.")
+   				deleteBoard();
+       		}
+   		}
+    }
+	</script>
+</div>
+</html>

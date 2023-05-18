@@ -1,0 +1,66 @@
+table {
+	margin-right: 15px;
+	margin-right: 15px;
+	margin-top: 50px;
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.btn {
+	margin-right: 15px;
+	margin-left: 15px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+main {
+	width: 60%;
+	justify-content: center;
+}
+
+.search {
+	text-align: center;
+}
+
+.search-set {
+	height: 30px;
+	justify-content: center;
+	display: flex; align-items : center;
+	text-align: center;
+}
+.table-contents {
+	font-size: 13px;
+}
+
+#pagination {
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+#select-type {
+	width: 70px;
+	height: 30px;
+	text-align: left;
+	align-items: center;
+}
+
+#search-keyword {
+	width: 250px;
+	height: 30px;
+	text-align: left;
+	align-items: center;
+}
+
+#search-button {
+	display: flex;
+	align-items:center;
+	justify-content: center;
+
+	width: 80px;
+	height: 30px;
+}
+
+#table-contents-title {
+	text-align: left;
+}

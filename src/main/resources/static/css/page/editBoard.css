@@ -1,0 +1,23 @@
+.btn_wrap{
+	margin-top: 15px;
+	text-align: center;
+	justify-content: center;
+}
+
+.field-error {
+	color: red;
+	font-size: 11px;
+}
+
+.form-horizontal {
+	text-align: center;
+}
+
+.form-group {
+	margin-bottom: 0;
+}
+
+main {
+	width: 60%;
+	justify-content: center;
+}

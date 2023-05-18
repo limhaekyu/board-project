@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="com.limhaekyu.boardproject.mapper.BoardMapper">
+	<insert id="writeBoard"
+		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
+		insert into tb_board (title, writer, password, contents)
+		values
+		(#{title}, #{writer}, #{password}, #{contents})
+	</insert>
+
+	<update id="deleteBoard">
+		update tb_board set is_deleted = 1, deleted_at =
+		now() WHERE id = #{id}
+	</update>
+
+
+	<select id="selectBoardDetail"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		select id, title, writer, password, contents, created_at
+		from tb_board
+		where id = #{id}
+	</select>
+	
+	<select id="selectBoardList" parameterType = "com.limhaekyu.boardproject.dto.PaginationDto"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		SELECT @ROWNUM:=@ROWNUM+1 AS RN, tb_board.*
+		FROM tb_board,
+		(SELECT @ROWNUM:=0) AS r
+		WHERE is_deleted = 0
+		ORDER BY RN DESC
+		LIMIT #{rowCount}
+		OFFSET #{offset}
+	</select>
+
+
+	<update id="editBoardPw"
+		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
+		update tb_board
+		SET title = #{title}, writer = #{writer}, password = #{passwordAfter}, contents = #{contents}
+		WHERE id = #{id}; 
+		
+	</update>
+	<update id="editBoard"
+		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
+		update tb_board
+		SET title = #{title}, writer = #{writer}, contents = #{contents}
+		WHERE id = #{id};
+	</update>
+	
+
+	<select id="searchBoardList" parameterType="map"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		SELECT @ROWNUM:=@ROWNUM+1 AS RN, tb_board.*
+		FROM tb_board, (SELECT @ROWNUM:=0) AS r
+		WHERE is_deleted = '0'
+		<choose>
+			<when
+				test="criteria.type != null and criteria.type.equals('all')">
+				AND title like CONCAT('%', #{criteria.keyword}, '%') OR
+				contents like CONCAT('%', #{criteria.keyword}, '%') OR writer like
+				CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('title')">
+				AND title like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('contents')">
+				AND contents like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('writer')">
+				AND writer like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+		</choose>
+		ORDER BY RN DESC
+		limit #{paginationDto.rowCount}
+		offset #{paginationDto.offset}
+	</select>
+
+	<!-- 게시물 총 개수 구하기 -->
+	<select id="getCount" resultType="int">
+		SELECT count(*) as listCnt
+		FROM
+		tb_board
+		where is_deleted = '0'
+	</select>
+	
+	<select id="getSearchCount" resultType="int">
+		SELECT count(*) as listCnt
+		FROM
+		tb_board
+		where is_deleted = '0'
+		<choose>
+			<when
+				test="criteria.type != null and criteria.type.equals('all')">
+				AND title like CONCAT('%', #{criteria.keyword}, '%') OR
+				contents like CONCAT('%', #{criteria.keyword}, '%') OR writer like
+				CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('title')">
+				AND title like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('contents')">
+				AND contents like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+			<when
+				test="criteria.type != null and criteria.type.equals('writer')">
+				AND writer like CONCAT('%', #{criteria.keyword}, '%')
+			</when>
+		</choose>
+	</select>
+	
+	<select id="searchBoardById"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		SELECT *
+		FROM
+		tb_board
+		where is_deleted ='0'
+		and id = #{id}
+	</select>
+
+	<select id="selectTestBoardList"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		select @rownum := @rownum+1 rownum, b.*
+		from tb_board b, (select @rownum := 0) rownum
+		where is_deleted = 0
+		order by id desc
+		limit #{rowCount}
+		offset #{offset}
+	</select>
+	
+	<select id="getLatelyCreatedAt"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		select * from tb_board
+		where is_deleted = 0
+		order by id DESC
+		limit 1
+	</select>
+	<select id="getPasswordById"
+		resultType="String">
+		select password from tb_board
+		where id = #{id}
+	</select>
+	
+</mapper>

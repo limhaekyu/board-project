@@ -1,0 +1,19 @@
+.form-horizontal {
+	
+	text-align: center;
+}
+
+
+.starter-template {
+	text-align: center;
+}
+
+.field-error {
+	color: red;
+	font-size: 11px;
+}
+
+main {
+	width: 60%;
+	justify-content: center;
+}
