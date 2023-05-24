@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.limhaekyu.boardproject.dto.BoardDto;
 import com.limhaekyu.boardproject.dto.Criteria;
 import com.limhaekyu.boardproject.dto.PaginationDto;
+import com.limhaekyu.boardproject.dto.ReplyBoardDto;
 
 @Mapper
 public interface BoardMapper {
@@ -36,4 +37,6 @@ public interface BoardMapper {
 	BoardDto getLatelyCreatedAt();
 
 	String getPasswordById(Long id);
+
+	void replyWriteBoard(ReplyBoardDto replyBoardDto);
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.limhaekyu.boardproject.dto.BoardDto;
 import com.limhaekyu.boardproject.dto.Criteria;
 import com.limhaekyu.boardproject.dto.PaginationDto;
+import com.limhaekyu.boardproject.dto.ReplyBoardDto;
 import com.limhaekyu.boardproject.mapper.BoardMapper;
 
 @Service
@@ -101,5 +102,17 @@ public class BoardService {
 		} else {
 			return false;
 		}
+	}
+
+	@Transactional
+	public void replyWriteBoard(ReplyBoardDto replyBoardDto) {
+		setChildBoardInfo(replyBoardDto);
+		boardMapper.replyWriteBoard(replyBoardDto);
+	}
+	
+	private ReplyBoardDto setChildBoardInfo(ReplyBoardDto replayBoardDto) {
+		replayBoardDto.setStep(replayBoardDto.getStep() + 1);
+		replayBoardDto.setDepth(replayBoardDto.getDepth() + 1);
+		return replayBoardDto;
 	}
 }

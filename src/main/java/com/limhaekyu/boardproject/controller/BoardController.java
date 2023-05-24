@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.limhaekyu.boardproject.dto.PaginationDto;
+import com.limhaekyu.boardproject.dto.ReplyBoardDto;
 import com.limhaekyu.boardproject.dto.BoardDto;
 import com.limhaekyu.boardproject.dto.Criteria;
 import com.limhaekyu.boardproject.service.BoardService;
@@ -96,7 +97,49 @@ public class BoardController {
 		}
 
 	}
+	@GetMapping("/board/write/reply")
+	public String viewReplyWriteBoard(Model model) {
+		return "/page/replyWriteBoard";
+	}
 
+	@PostMapping(value = "/board/write/reply", produces="application/json;charset=UTF-8")
+	public String replyWriteBoard(@RequestBody ReplyBoardDto replyBoardDto, Model model, HttpServletResponse response) {
+		
+		Map<String, String> errors = new HashMap<>();
+		
+		if (boardService.validateWord(replyBoardDto.getTitle())) {
+			response.addHeader("bad-word-title", "1");
+			errors.put("contents", "비속어가 감지되었습니다.");
+		}
+		
+		if (boardService.validateWord(replyBoardDto.getWriter())) {
+			response.addHeader("bad-word-writer", "1");
+			errors.put("contents", "비속어가 감지되었습니다.");
+		}
+
+		if (boardService.validateWord(replyBoardDto.getContents())) {
+			response.addHeader("bad-word-contents", "1");
+			errors.put("contents", "비속어가 감지되었습니다.");
+		}
+/*
+		if (!boardService.chkCoolTimeWriteBoard()) {
+			response.addHeader("cooltime", "1");
+			errors.put("cooltime", "60초가 지나지 않았습니다.");
+		} else {
+			response.addHeader("cooltime", "0");
+		}
+*/
+		// 검증에 실패하면 다시 입력 폼으로
+		if (!errors.isEmpty()) {
+			return "page/writeBoard";
+		} else {
+			// 성공 로직
+			boardService.replyWriteBoard(replyBoardDto);
+			return "redirect:/";
+		}
+
+	}
+	
 	@GetMapping("/board/{id}")
 	public String selectBoardDetail(@PathVariable(value = "id") Long id, Model model) {
 		BoardDto boardInfo = boardService.selectBoardDetail(id);

@@ -48,6 +48,7 @@
 			<!-- 수정/삭제 -->
 			<div class="btn_wrap text-center">
 				<div>
+					<a class="btn btn-primary" th:href="@{/board/write/reply}">답글달기</a>
 					<a class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
 					<a class="btn btn-primary" onclick="chkPassword()">수정</a>	
 				</div>
@@ -57,6 +58,8 @@
 					<a th:href="@{'/'}" class="btn btn-primary"> 목록 </a>
 				</div>
 			</div>
+			
+			
 			
 		</div>
 	</main>

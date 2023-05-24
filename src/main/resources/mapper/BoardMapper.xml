@@ -7,9 +7,16 @@
 <mapper namespace="com.limhaekyu.boardproject.mapper.BoardMapper">
 	<insert id="writeBoard"
 		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
-		insert into tb_board (title, writer, password, contents)
+		insert into tb_board (title, writer, password, contents, group_no)
 		values
-		(#{title}, #{writer}, #{password}, #{contents})
+		(#{title}, #{writer}, #{password}, #{contents}, (SELECT IFNULL(MAX(id) + 1, 1) FROM tb_board b))
+	</insert>
+
+	<insert id="replyWriteBoard"
+		parameterType="com.limhaekyu.boardproject.dto.ReplyBoardDto">
+		insert into tb_board (group_no, step, depth, title, writer, password, contents)
+		values
+		(#{groupNo}, #{step}, #{depth}, #{title}, #{writer}, #{password}, #{contents})
 	</insert>
 
 	<update id="deleteBoard">
