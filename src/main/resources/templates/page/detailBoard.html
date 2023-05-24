@@ -24,6 +24,8 @@
 		</div>
 		<div class="starter-template">
 
+			<input type="hidden" id="id" name="id" th:value="${boardInfo.id}">
+			
 			<table class="table table-fixed w-auto" style="width: 60%">
 				<tbody>
 					<tr>
@@ -48,7 +50,7 @@
 			<!-- 수정/삭제 -->
 			<div class="btn_wrap text-center">
 				<div>
-					<a class="btn btn-primary" th:href="@{/board/write/reply}">답글달기</a>
+					<a class="btn btn-primary" onclick="viewReplyBoard()">답글달기</a>
 					<a class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
 					<a class="btn btn-primary" onclick="chkPassword()">수정</a>	
 				</div>

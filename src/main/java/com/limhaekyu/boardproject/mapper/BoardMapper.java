@@ -39,4 +39,6 @@ public interface BoardMapper {
 	String getPasswordById(Long id);
 
 	void replyWriteBoard(ReplyBoardDto replyBoardDto);
+
+	ReplyBoardDto findParentInfo(Long id);
 }

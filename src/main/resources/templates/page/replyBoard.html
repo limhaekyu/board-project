@@ -14,7 +14,7 @@
 <!-- index.html 고유 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script th:src="@{/js/page/replyWriteBoard.js}"></script>
+	<script th:src="@{/js/page/replyBoard.js}"></script>
 
 </th:block>
 
@@ -24,9 +24,7 @@
 			<h2>답글 등록</h2>
 		</div>
 		<div class="starter-template" id="starter-template">
-			<input type="hidden" id="groupno" name="groupno" th:value="${groupno}">
-			<input type="hidden" id="step" name="step" th:value="${step}">
-			<input type="hidden" id="depth" name="depth" th:value="${depth}">
+			<input type="hidden" id="id" name="id" th:value="${id}">
 			<input type="hidden" id="cooltime" name="cooltime" th:value="${cooltime}">
 			
 				<div class="form-group" style="margin:0;">
@@ -72,7 +70,7 @@
 
 				<div class="btn_wrap text-center">
 					<div>
-						<button style="float:center;" type="submit" onclick="submitReplyWriteBoard()"
+						<button style="float:center;" type="submit" onclick="submitReplyBoard()"
 							id = "submitReplyWriteBoard"
 							class="btn btn-primary waves-effect waves-light">답글 등록</button>
 						<!--  <p id="coolTimeDisplay"></p>  -->

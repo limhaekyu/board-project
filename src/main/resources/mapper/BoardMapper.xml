@@ -18,6 +18,10 @@
 		values
 		(#{groupNo}, #{step}, #{depth}, #{title}, #{writer}, #{password}, #{contents})
 	</insert>
+	
+	<select id="findParentInfo" resultType="com.limhaekyu.boardproject.dto.ReplyBoardDto">
+		SELECT group_no, step, depth from tb_board where id = #{id}
+	</select>
 
 	<update id="deleteBoard">
 		update tb_board set is_deleted = 1, deleted_at =

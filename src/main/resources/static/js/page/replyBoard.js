@@ -47,10 +47,8 @@ function checkInputPassword() {
 	}
 }
 
-function submitWriteBoard() {
-	var parentGroup = document.getElementById("groupno");
-	var step = document.getElementById("step");
-	var depth = document.getElementById("depth");
+function submitReplyBoard() {
+	var id = document.getElementById("id");
 	var title = document.getElementById("title");
 	var writer = document.getElementById("writer");
 	var password = document.getElementById("password");
@@ -72,11 +70,8 @@ function submitWriteBoard() {
 	else {
 		axios({
 			method: 'post',
-			url: '/board/write/reply',
+			url: '/board/'+id.value+'/reply',
 			data: {
-				parentGroup: parentGroup.value,
-				step: step.value,
-				depth: depth.value,
 				title: title.value,
 				writer: writer.value,
 				password: password.value,

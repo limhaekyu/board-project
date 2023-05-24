@@ -105,14 +105,20 @@ public class BoardService {
 	}
 
 	@Transactional
-	public void replyWriteBoard(ReplyBoardDto replyBoardDto) {
-		setChildBoardInfo(replyBoardDto);
+	public void replyWriteBoard(Long id, ReplyBoardDto replyBoardDto) {
+		ReplyBoardDto parentInfo = findParentInfo(id);
+		setChildBoardInfo(parentInfo, replyBoardDto);
 		boardMapper.replyWriteBoard(replyBoardDto);
 	}
 	
-	private ReplyBoardDto setChildBoardInfo(ReplyBoardDto replayBoardDto) {
-		replayBoardDto.setStep(replayBoardDto.getStep() + 1);
-		replayBoardDto.setDepth(replayBoardDto.getDepth() + 1);
+	private ReplyBoardDto setChildBoardInfo(ReplyBoardDto parentInfo, ReplyBoardDto replayBoardDto) {
+		replayBoardDto.setGroupNo(parentInfo.getGroupNo());
+		replayBoardDto.setStep(parentInfo.getStep() + 1);
+		replayBoardDto.setDepth(parentInfo.getDepth() + 1);
 		return replayBoardDto;
+	}
+	
+	private ReplyBoardDto findParentInfo(Long id) {
+		return boardMapper.findParentInfo(id);
 	}
 }

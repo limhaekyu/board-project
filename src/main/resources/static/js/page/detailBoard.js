@@ -10,3 +10,19 @@ function checkInput(el, max) {
 		el.value = el.value.substr(0, 0);
 	}
 }
+
+function viewReplyBoard() {
+	var id = document.getElementById("id");
+	axios({
+		method: 'get',
+		url: '/board/'+id.value+'/reply',
+		params:{}
+	})
+	.then(function(response) {
+		console.log(response);
+		window.location.href = response.request.responseURL;
+	})
+	.catch(function(error) {
+		console.log(error);
+	})	
+}

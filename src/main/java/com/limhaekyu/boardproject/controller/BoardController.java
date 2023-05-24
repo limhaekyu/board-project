@@ -97,13 +97,14 @@ public class BoardController {
 		}
 
 	}
-	@GetMapping("/board/write/reply")
-	public String viewReplyWriteBoard(Model model) {
-		return "/page/replyWriteBoard";
+	@GetMapping("/board/{id}/reply")
+	public String viewReplyBoard(@PathVariable(value="id") Long id, Model model) {
+		model.addAttribute("id", id);
+		return "/page/replyBoard";
 	}
 
-	@PostMapping(value = "/board/write/reply", produces="application/json;charset=UTF-8")
-	public String replyWriteBoard(@RequestBody ReplyBoardDto replyBoardDto, Model model, HttpServletResponse response) {
+	@PostMapping(value = "/board/{id}/reply", produces="application/json;charset=UTF-8")
+	public String replyBoard(@PathVariable(value = "id") Long id, @RequestBody ReplyBoardDto replyBoardDto, Model model, HttpServletResponse response) {
 		
 		Map<String, String> errors = new HashMap<>();
 		
@@ -134,7 +135,7 @@ public class BoardController {
 			return "page/writeBoard";
 		} else {
 			// 성공 로직
-			boardService.replyWriteBoard(replyBoardDto);
+			boardService.replyWriteBoard(id, replyBoardDto);
 			return "redirect:/";
 		}
 
