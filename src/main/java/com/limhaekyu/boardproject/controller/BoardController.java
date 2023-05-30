@@ -207,7 +207,6 @@ public class BoardController {
 	
 	@PostMapping("/board/{id}/comment")
 	public String addComment(@PathVariable(value = "id") Long id, @RequestBody CommentDto commentDto) {
-		// id, writer, password, contents 값 comment에 저장
 		commentService.addComment(id, commentDto);
 		return "redirect:/board/{id}";
 	}

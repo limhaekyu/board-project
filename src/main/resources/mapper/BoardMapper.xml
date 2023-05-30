@@ -72,21 +72,21 @@
 		WHERE is_deleted = '0'
 		<choose>
 			<when
-				test="criteria.type != null and criteria.type.equals('all')">
+				test="criteria.keyword != null and criteria.type.equals('all')">
 				AND title like CONCAT('%', #{criteria.keyword}, '%') OR
 				contents like CONCAT('%', #{criteria.keyword}, '%') OR writer like
 				CONCAT('%', #{criteria.keyword}, '%')
 			</when>
 			<when
-				test="criteria.type != null and criteria.type.equals('title')">
+				test="criteria.keyword != null and criteria.type.equals('title')">
 				AND title like CONCAT('%', #{criteria.keyword}, '%')
 			</when>
 			<when
-				test="criteria.type != null and criteria.type.equals('contents')">
+				test="criteria.keyword != null and criteria.type.equals('contents')">
 				AND contents like CONCAT('%', #{criteria.keyword}, '%')
 			</when>
 			<when
-				test="criteria.type != null and criteria.type.equals('writer')">
+				test="criteria.keyword != null and criteria.type.equals('writer')">
 				AND writer like CONCAT('%', #{criteria.keyword}, '%')
 			</when>
 		</choose>

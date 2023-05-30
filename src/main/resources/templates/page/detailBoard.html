@@ -24,6 +24,7 @@
 		</div>
 
 		<div class="starter-template">
+			<input type="hidden" id="idDeleted" name="idDeleted" th:value="${boardInfo.isDeleted}">
 			<input type="hidden" id="id" name="id" th:value="${boardInfo.id}">
 			<input type="hidden" id="password" name="password"
 				th:value="${boardInfo.password}">
