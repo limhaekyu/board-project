@@ -11,8 +11,13 @@
 		values
 		(#{title}, #{writer}, #{password}, #{contents}, (SELECT IFNULL(MAX(id) + 1, 1) FROM tb_board b))
 	</insert>
+	
+	<update id="updateStepForReplyBoard"
+		parameterType="com.limhaekyu.boardproject.dto.ReplyBoardDto">
+		UPDATE tb_board SET step = step+1 WHERE group_no = #{groupNo} AND step >= #{step};
+	</update>
 
-	<insert id="replyWriteBoard"
+	<insert id="replyBoard"
 		parameterType="com.limhaekyu.boardproject.dto.ReplyBoardDto">
 		insert into tb_board (group_no, step, depth, title, writer, password, contents)
 		values
@@ -38,15 +43,12 @@
 	
 	<select id="selectBoardList" parameterType = "com.limhaekyu.boardproject.dto.PaginationDto"
 		resultType="com.limhaekyu.boardproject.dto.BoardDto">
-		SELECT @ROWNUM:=@ROWNUM+1 AS RN, tb_board.*
-		FROM tb_board,
-		(SELECT @ROWNUM:=0) AS r
-		WHERE is_deleted = 0
+		SELECT @ROWNUM:=@ROWNUM+1 AS RN, b.*
+		FROM (SELECT @ROWNUM:=0) AS r, (SELECT * FROM tb_board ORDER BY group_no ASC, step DESC) as b
 		ORDER BY RN DESC
 		LIMIT #{rowCount}
 		OFFSET #{offset}
 	</select>
-
 
 	<update id="editBoardPw"
 		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
@@ -98,7 +100,6 @@
 		SELECT count(*) as listCnt
 		FROM
 		tb_board
-		where is_deleted = '0'
 	</select>
 	
 	<select id="getSearchCount" resultType="int">
@@ -160,4 +161,10 @@
 		where id = #{id}
 	</select>
 	
+	<update id="updateCommentCnt">
+		update tb_board b
+		set b.comment_cnt = (select count(*) from tb_comment where board_id = #{boardId} and is_deleted = 0)
+		where b.id = #{boardId}
+	</update>
+
 </mapper>

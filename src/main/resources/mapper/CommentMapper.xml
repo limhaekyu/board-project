@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mapper DTD 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SQL Mapping -->
+<mapper namespace="com.limhaekyu.boardproject.mapper.CommentMapper">
+	<insert id="addComment"
+		parameterType="com.limhaekyu.boardproject.dto.CommentDto">
+		insert into tb_comment (writer, password, contents, board_id)
+		values
+		(#{writer}, #{password}, #{contents}, #{boardId})
+	</insert>
+
+	<select id = "findCommentByBoardId"
+		resultType="com.limhaekyu.boardproject.dto.CommentDto">
+		select * from tb_comment where board_id = #{boardId} AND is_deleted = 0 order by id DESC
+	</select>
+	
+	<update id="deleteComment" parameterType="map">
+		update tb_comment set is_deleted = 1, deleted_at =
+		now() WHERE id = #{commentId} AND board_id = #{boardId}
+	</update>
+</mapper>

@@ -21,17 +21,21 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.limhaekyu.boardproject.dto.PaginationDto;
 import com.limhaekyu.boardproject.dto.ReplyBoardDto;
 import com.limhaekyu.boardproject.dto.BoardDto;
+import com.limhaekyu.boardproject.dto.CommentDto;
 import com.limhaekyu.boardproject.dto.Criteria;
 import com.limhaekyu.boardproject.service.BoardService;
+import com.limhaekyu.boardproject.service.CommentService;
 
 @Controller
 public class BoardController {
 
 	private final BoardService boardService;
+	private final CommentService commentService;
 
 	@Autowired
-	public BoardController(BoardService boardService) {
+	public BoardController(BoardService boardService, CommentService commentService) {
 		this.boardService = boardService;
+		this.commentService = commentService;
 	}
 
 	@GetMapping(value = { "/", "/board" })
@@ -135,16 +139,19 @@ public class BoardController {
 			return "page/writeBoard";
 		} else {
 			// 성공 로직
-			boardService.replyWriteBoard(id, replyBoardDto);
+			boardService.replyBoard(id, replyBoardDto);
 			return "redirect:/";
 		}
 
 	}
 	
 	@GetMapping("/board/{id}")
-	public String selectBoardDetail(@PathVariable(value = "id") Long id, Model model) {
-		BoardDto boardInfo = boardService.selectBoardDetail(id);
+	public String selectBoardDetail(@PathVariable(value = "id") Long boardId, Model model) {
+		BoardDto boardInfo = boardService.selectBoardDetail(boardId);
+		List<CommentDto> commentList = commentService.findCommentByBoardId(boardId);
+
 		model.addAttribute("boardInfo", boardInfo);
+		model.addAttribute("commentList", commentList);
 		return "page/detailBoard";
 	}
 
@@ -196,5 +203,19 @@ public class BoardController {
 			boardService.editBoard(boardDto);
 			return "redirect:/board/{id}";
 		}
+	}
+	
+	@PostMapping("/board/{id}/comment")
+	public String addComment(@PathVariable(value = "id") Long id, @RequestBody CommentDto commentDto) {
+		// id, writer, password, contents 값 comment에 저장
+		commentService.addComment(id, commentDto);
+		return "redirect:/board/{id}";
+	}
+	
+	@PostMapping("/board/{id}/comment/{commentId}")
+	public String deleteComment(@PathVariable(value = "id") Long boardId, @PathVariable(value = "commentId") Long commentId) {
+		commentService.deleteComment(boardId, commentId);
+		return "redirect:/board/{id}";
+
 	}
 }

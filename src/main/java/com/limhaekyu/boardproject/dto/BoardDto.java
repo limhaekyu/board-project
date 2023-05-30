@@ -20,6 +20,10 @@ public class BoardDto {
 	private boolean isDeleted;
 	private String passwordBefore;
 	private String passwordAfter;
+	private Long groupNo;	// 원글 그룹 번호
+	private Integer step;	// 원글 그룹에서의 순번 
+	private Integer depth;	// 계층의 깊이 ( 원글 0, 답글 1, 답글에답글 2)
+	private Integer commentCnt;
 	
 	public BoardDto(String title, String writer, String password, String contents) {
 		this.title = title;
@@ -127,5 +131,35 @@ public class BoardDto {
 	public void setPasswordAfter(String passwordAfter) {
 		this.passwordAfter = passwordAfter;
 	}
+	public Long getGroupNo() {
+		return groupNo;
+	}
 
+	public void setGroupNo(Long groupNo) {
+		this.groupNo = groupNo;
+	}
+
+	public Integer getStep() {
+		return step;
+	}
+
+	public void setStep(Integer step) {
+		this.step = step;
+	}
+
+	public Integer getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Integer depth) {
+		this.depth = depth;
+	}
+
+	public Integer getCommentCnt() {
+		return commentCnt;
+	}
+
+	public void setCommentCnt(Integer commentCnt) {
+		this.commentCnt = commentCnt;
+	}
 }

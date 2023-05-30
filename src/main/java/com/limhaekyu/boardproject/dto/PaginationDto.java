@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 public class PaginationDto {
 
 	// 페이지당 보여지는 게시물 수
-	private int rowCount = 6; 
+	private int rowCount = 10; 
 	// 한블럭에 보여줄 페이지 개수
-	private int pageCount = 4; 
+	private int pageCount = 5; 
 	// 총 게시물 수
 	private int totalCount; 
 	// 현재 페이지

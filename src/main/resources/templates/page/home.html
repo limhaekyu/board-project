@@ -30,7 +30,6 @@
 				th:href="@{/board/write}">글쓰기</a> <a style="float: left"
 				class="btn btn-primary" th:href="@{/}">메인목록</a>
 
-
 			<table class="table table-bordered">
 				<!-- CONTENTS !-->
 				<thead>
@@ -46,12 +45,30 @@
 					<!-- CONTENTS !-->
 					<tr th:each="board : ${boardList}">
 						<td th:text="${board.RN}"></td>
-						<td id="table-conents-title" style="text-align: left;"><a
-							th:href="'/board/'+${board.id}" th:text="${board.title}"></a></td>
+
+						<td id="table-conents-title" style="text-align: left;">
+							<span th:utext="|${'&ensp;'.repeat(board.depth)}|"></span>
+							
+							<a	th:if="${board.step} != 0 and ${board.isDeleted} == false"
+								th:href="'/board/'+${board.id}" th:utext="|↳ ${board.title} (${board.commentCnt})|">
+							</a>
+							<a	th:if="${board.step} == 0 and ${board.isDeleted} == false"
+								th:href="'/board/'+${board.id}" th:text="|${board.title} (${board.commentCnt})|">
+							</a>
+							<span	th:if="${board.step} != 0 and ${board.isDeleted} == true"
+								th:utext="|↳ 삭제된 게시글 입니다.|">
+							</span>
+							<span	th:if="${board.step} == 0 and ${board.isDeleted} == true"
+								th:text="| 삭제된 게시글 입니다.|">
+							</span>
+						</td>							
+						
 						<td th:text="${board.writer}"></td>
+						
 						<td
 							th:text="${board.createdAt} ? ${#temporals.format(board.createdAt,'yyyy-MM-dd')} : ${board.createdAt}">
 						</td>
+						
 					</tr>
 				</tbody>
 			</table>

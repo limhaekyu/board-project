@@ -49,6 +49,7 @@ public class BoardService {
 	}
 
 	public List<BoardDto> searchBoardList(Criteria criteria, PaginationDto paginationDto) {
+		
 		return boardMapper.searchBoardList(criteria, paginationDto);
 	}
 
@@ -105,10 +106,11 @@ public class BoardService {
 	}
 
 	@Transactional
-	public void replyWriteBoard(Long id, ReplyBoardDto replyBoardDto) {
+	public void replyBoard(Long id, ReplyBoardDto replyBoardDto) {
 		ReplyBoardDto parentInfo = findParentInfo(id);
 		setChildBoardInfo(parentInfo, replyBoardDto);
-		boardMapper.replyWriteBoard(replyBoardDto);
+		boardMapper.updateStepForReplyBoard(replyBoardDto);
+		boardMapper.replyBoard(replyBoardDto);
 	}
 	
 	private ReplyBoardDto setChildBoardInfo(ReplyBoardDto parentInfo, ReplyBoardDto replayBoardDto) {

@@ -22,11 +22,13 @@
 		<div class="page-header">
 			<h1>게시글 상세</h1>
 		</div>
-		<div class="starter-template">
 
+		<div class="starter-template">
 			<input type="hidden" id="id" name="id" th:value="${boardInfo.id}">
-			
-			<table class="table table-fixed w-auto" style="width: 60%">
+			<input type="hidden" id="password" name="password"
+				th:value="${boardInfo.password}">
+
+			<table class="table table-fixed w-auto" style="width: 70%">
 				<tbody>
 					<tr>
 						<th class="col-md-2">제목</th>
@@ -43,92 +45,79 @@
 					</tr>
 					<tr>
 						<th class="col-md-2">본문 내용</th>
-						<td style="white-space:pre-wrap" class="col-md-9" th:text="${boardInfo.contents}"></td>
+						<td style="white-space: pre-wrap" class="col-md-9"
+							th:text="${boardInfo.contents}"></td>
 					</tr>
 				</tbody>
 			</table>
 			<!-- 수정/삭제 -->
 			<div class="btn_wrap text-center">
 				<div>
-					<a class="btn btn-primary" onclick="viewReplyBoard()">답글달기</a>
-					<a class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
-					<a class="btn btn-primary" onclick="chkPassword()">수정</a>	
-				</div>
-			</div>
-			<div class="btn_wrap text-center" style="float:right;">
-				<div>
+					<a class="btn btn-primary" onclick="viewReplyBoard()">답글달기</a> <a
+						class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
+					<a class="btn btn-primary" onclick="chkPassword()">수정</a>
 					<a th:href="@{'/'}" class="btn btn-primary"> 목록 </a>
 				</div>
 			</div>
-			
-			
-			
+
+
+			<!-- 댓글달기 -->
+			<br />
+			<div class="card" style="width: 80%; margin:auto;">
+				<div class="card-header">댓글</div>
+				<div class="commentWriter">
+					<label style="float: left" for="commentWriter"
+						class="col-sm-2 control-label">작성자</label> <input type="text"
+						style="width: 70%" id="commentWriter" name="commentWriter"
+						onchange="checkInputCommentWriter(this, 7)"
+						oninput="checkInputCommentWriter(this, 7)"
+						placeholder="작성자를 입력해주세요. (최대 7글자)" /> <span style="float: right"
+						id="commentWriterLengthCheck">0/7</span>
+				</div>
+				<div class="commentPassword">
+					<label style="float: left" for="commentPassword"
+						class="col-sm-2 control-label">비밀번호</label> <input type="password"
+						onchange="checkInputCommentPassword(this, 15)" style="width: 70%"
+						id="commentPassword" name="commentPassword"
+						placeholder="영문, 숫자, 특수문자 조합의 8~15자리를 입력해주세요.">
+
+				</div>
+				<div class="commentContents">
+					<label style="float: left" for="commentContents"
+						class="col-sm-2 control-label">내용</label>
+					<textarea style="resize: none" id="commentContents" cols="56"
+						rows="3" oninput="checkInputCommentContents(this, 70)"
+						onchange="checkInputCommentContents(this, 70)"
+						placeholder="내용을 입력해주세요 (최대 70자)"></textarea>
+					<span style="float: right" id="commentContentsLengthCheck">0/70</span>
+					<div style="display: flex; justify-content: center;">
+						<button style="float: center;" type="submit"
+							onclick="submitComment()" id="submitComment"
+							class="btn btn-primary waves-effect waves-light">댓글 등록</button>
+					</div>
+				</div>
+				<ul id="reply--box" class="list-group"
+					th:each="comment : ${commentList}">
+					<li id="reply--[[${comment.id}]]"
+						class="list-group-item d-flex justify-content-between">
+						<div>
+							<div style="font-size: 14px;" th:text="|${comment.contents}|"></div>
+							<div class="d-flex">
+								<div class="text-monospace"
+									style="float: left; font-size: 13px;"
+									th:utext="|작성자 : ${comment.writer}&nbsp; |"></div>
+								<div>
+									<button class="badge btn-danger"
+										th:attr="comment-id = ${comment.id}, comment-password = ${comment.password}"
+										onclick="deleteComment(this.getAttribute('comment-id'), this.getAttribute('comment-password'))">
+										삭제</button>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</main>
-	<script th:inline="javascript">
-    function chkPassword() {
-        var boardInfo = [[${boardInfo}]];
-       	var deletePasswd = prompt("게시글의 비밀번호를 입력하세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~16자리 입니다.)", "");
-       	if (deletePasswd == ""){
-       		alert("비밀번호를 입력해주세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~15자리 입니다.)")
-     		chkPassword();
-       	} else if (deletePasswd == null) {
-       		return false;
-       	} else{
-       		if (boardInfo.password == deletePasswd) {
-       			axios({
-       				method: 'get',
-       				url: '/board/' + boardInfo.id +'/edit',
-       				params: {}
-       			})
-       			.then(function(response) {
-       				console.log(response);
-       				window.location.href = response.request.responseURL;
-       			})
-       			.catch(function(error) {
-       				console.log(error);
-       			})
-       		} else {
-       			alert("일치하지 않는 비빌번호입니다. 비밀번호를 다시 입력해주세요.")
-   				chkPassword();
-       		}
-   		}
-    }
-	</script>
-	
-	<script th:inline="javascript">
-    function deleteBoard() {
-        var boardInfo = [[${boardInfo}]];
-       	var deletePasswd = prompt("게시글의 비밀번호를 입력하세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~16자리 입니다.)", "");
-       	if (deletePasswd == ""){
-       		alert("비밀번호를 입력해주세요. \n(비밀번호는 영문,숫자,특수문자 조합의 8~15자리 입니다.)")
-     		deleteBoard();
-       	} else if (deletePasswd == null) {
-       		return false;
-       	} else{
-       		if (boardInfo.password == deletePasswd) {
-       			if(confirm("게시글을 삭제하시겠습니까?")) {
-       				axios({
-       	   				method: 'post',
-       	   				url: '/board/' + boardInfo.id,
-       	   				params: {}
-       	   			})
-       	   			.then(function(response) {
-       	   				console.log(response);
-       	   				window.location.href = response.request.responseURL;
-       	   			})
-       	   			.catch(function(error) {
-       	   				console.log(error);
-       	   			})
-       			} else {
-       				return false;
-       			}
-       		} else {
-       			alert("일치하지 않는 비빌번호입니다. 비밀번호를 다시 입력해주세요.")
-   				deleteBoard();
-       		}
-   		}
-    }
-	</script>
 </div>
 </html>
