@@ -49,6 +49,13 @@
 						<td style="white-space: pre-wrap" class="col-md-9"
 							th:text="${boardInfo.contents}"></td>
 					</tr>
+					<tr>
+						<th class="col-md-2">첨부 파일</th>
+						<td style="white-space: pre-wrap" class="col-md-9" th:each="file : ${fileList}">
+							
+							<button onclick="">download</button>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<!-- 수정/삭제 -->

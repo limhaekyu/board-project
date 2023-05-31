@@ -2,8 +2,12 @@ package com.limhaekyu.boardproject.controller;
 
 import java.util.List;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
+import java.io.File;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.limhaekyu.boardproject.dto.PaginationDto;
@@ -30,9 +35,11 @@ import com.limhaekyu.boardproject.dto.ReplyBoardDto;
 import com.limhaekyu.boardproject.dto.BoardDto;
 import com.limhaekyu.boardproject.dto.CommentDto;
 import com.limhaekyu.boardproject.dto.Criteria;
+import com.limhaekyu.boardproject.dto.FileDto;
 import com.limhaekyu.boardproject.service.BoardService;
 import com.limhaekyu.boardproject.service.CommentService;
 import com.limhaekyu.boardproject.service.ExcelGenerator;
+import com.limhaekyu.boardproject.service.FileService;
 
 import lombok.extern.log4j.Log4j;
 
@@ -42,11 +49,13 @@ public class BoardController {
 
 	private final BoardService boardService;
 	private final CommentService commentService;
+	private final FileService fileService;
 	
 	@Autowired
-	public BoardController(BoardService boardService, CommentService commentService) {
+	public BoardController(BoardService boardService, CommentService commentService, FileService fileService) {
 		this.boardService = boardService;
 		this.commentService = commentService;
+		this.fileService = fileService;
 	}
 
 	@GetMapping(value = { "/", "/board" })
@@ -77,7 +86,7 @@ public class BoardController {
 	
 
 	@PostMapping(value = "/board/write", produces="application/json;charset=UTF-8")
-	public String writeBoard(@RequestBody BoardDto boardDto, Model model, HttpServletResponse response) {
+	public String writeBoard(BoardDto boardDto, HttpServletResponse response) {
 		Map<String, String> errors = new HashMap<>();
 		
 		if (boardService.validateWord(boardDto.getTitle())) {
@@ -100,7 +109,8 @@ public class BoardController {
 			return "page/writeBoard";
 		} else {
 			// 성공 로직
-			boardService.writeBoard(boardDto);
+			boardService.writeBoard(boardDto);;
+			fileService.uploadFile(boardDto.getFiles(), boardDto.getId());
 			return "redirect:/";
 		}
 
@@ -154,7 +164,8 @@ public class BoardController {
 	public String selectBoardDetail(@PathVariable(value = "id") Long boardId, Model model) {
 		BoardDto boardInfo = boardService.selectBoardDetail(boardId);
 		List<CommentDto> commentList = commentService.findCommentByBoardId(boardId);
-
+		List<FileDto> fileList = fileService.findFileByBoardId(boardId);
+		model.addAttribute("fileList", fileList);
 		model.addAttribute("boardInfo", boardInfo);
 		model.addAttribute("commentList", commentList);
 		return "page/detailBoard";
@@ -246,5 +257,40 @@ public class BoardController {
 		headers.setContentDispositionFormData("attachment", "boardList.xlsx");
 		
 		return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+	}
+	
+	@GetMapping("/test")
+	public String testBoard(Model model) {
+		model.addAttribute("boardDto", new BoardDto());
+		return "/page/testWriteBoard2";
+	}
+	
+	@PostMapping("/upload")
+	public String upload( @RequestParam("files") MultipartFile[] files) {
+		String uploadPath = "C:/file";
+		for (MultipartFile file : files) {
+			String originalName = file.getOriginalFilename();
+			String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
+			
+			String uuid = UUID.randomUUID().toString();
+			
+			String saveFileName = uploadPath + File.separator + uuid + "_" + fileName;
+			
+			Path savePath = Paths.get(saveFileName);
+			
+			try {
+				file.transferTo(savePath);
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "redirect:/";
+	}
+	
+	@PostMapping("/test")
+	public String testUpload(BoardDto boardDto) {
+		boardService.writeBoard(boardDto);;
+		fileService.uploadFile(boardDto.getFiles(), boardDto.getId());
+		return "redirect:/";
 	}
 }

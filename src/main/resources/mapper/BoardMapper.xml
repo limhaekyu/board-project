@@ -5,7 +5,7 @@
 
 <!-- SQL Mapping -->
 <mapper namespace="com.limhaekyu.boardproject.mapper.BoardMapper">
-	<insert id="writeBoard"
+	<insert id="writeBoard" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.limhaekyu.boardproject.dto.BoardDto">
 		insert into tb_board (title, writer, password, contents, group_no)
 		values
