@@ -166,5 +166,40 @@
 		set b.comment_cnt = (select count(*) from tb_comment where board_id = #{boardId} and is_deleted = 0)
 		where b.id = #{boardId}
 	</update>
-
+	
+	<select id="searchBoardListNoPaging"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		SELECT @ROWNUM:=@ROWNUM+1 AS RN, tb_board.*
+		FROM tb_board, (SELECT @ROWNUM:=0) AS r
+		WHERE is_deleted = '0'
+		<choose>
+			<when
+				test="keyword != null and type.equals('all')">
+				AND title like CONCAT('%', #{keyword}, '%') OR
+				contents like CONCAT('%', #{keyword}, '%') OR writer like
+				CONCAT('%', #{keyword}, '%')
+			</when>
+			<when
+				test="keyword != null and type.equals('title')">
+				AND title like CONCAT('%', #{keyword}, '%')
+			</when>
+			<when
+				test="keyword != null and type.equals('contents')">
+				AND contents like CONCAT('%', #{keyword}, '%')
+			</when>
+			<when
+				test="keyword != null and type.equals('writer')">
+				AND writer like CONCAT('%', #{keyword}, '%')
+			</when>
+		</choose>
+		ORDER BY RN DESC
+	</select>
+	
+	<select id="selectBoardListNoPaging"
+		resultType="com.limhaekyu.boardproject.dto.BoardDto">
+		SELECT @ROWNUM:=@ROWNUM+1 AS RN, b.*
+		FROM (SELECT @ROWNUM:=0) AS r, (SELECT * FROM tb_board where is_deleted = '0' ORDER BY group_no ASC, step DESC) as b
+		ORDER BY RN DESC
+	</select>
+	
 </mapper>

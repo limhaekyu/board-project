@@ -123,4 +123,14 @@ public class BoardService {
 	private ReplyBoardDto findParentInfo(Long id) {
 		return boardMapper.findParentInfo(id);
 	}
+
+	public List<BoardDto> searchBoardListNoPaging(String type, String keyword) {
+		return boardMapper.searchBoardListNoPaging(type, keyword);
+	}
+
+	public List<BoardDto> selectBoardListNoPaging() {
+		return boardMapper.selectBoardListNoPaging();
+	}
+	
+	
 }

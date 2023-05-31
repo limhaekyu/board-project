@@ -23,6 +23,21 @@
 		<div class="page-header">
 			<h2>게시글 목록</h2>
 		</div>
+		<div>
+			<div style="float: right;">
+		        <form action="/excel/download" method="get" th:if="${criteria.keyword != null}">
+		        	<input type="hidden" name="type" th:value="${criteria.type}">
+		        	<input type="hidden" name="keyword" th:value="${criteria.keyword}">
+		            <button  class="btn btn-success" type="submit">엑셀 다운로드</button>
+		        </form>
+		        <form action="/excel/download" method="get" th:if="${criteria.keyword == null}">
+		            <button  class="btn btn-success" type="submit">엑셀 다운로드</button>
+		        </form>
+			</div>
+		</div>
+		<br/>
+		<br/>
+		<br/>
 		<div class="starter-template">
 
 			<!-- 글쓰기 버튼 -->

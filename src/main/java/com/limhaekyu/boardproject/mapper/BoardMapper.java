@@ -45,4 +45,8 @@ public interface BoardMapper {
 	void updateStepForReplyBoard(ReplyBoardDto replyBoardDto);
 
 	void updateCommentCnt(Long boardId);
+
+	List<BoardDto> searchBoardListNoPaging(@Param("type") String type, @Param("keyword") String keyword);
+
+	List<BoardDto> selectBoardListNoPaging();
 }

@@ -1,6 +1,7 @@
 package com.limhaekyu.boardproject.controller;
 
 import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -8,7 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +32,17 @@ import com.limhaekyu.boardproject.dto.CommentDto;
 import com.limhaekyu.boardproject.dto.Criteria;
 import com.limhaekyu.boardproject.service.BoardService;
 import com.limhaekyu.boardproject.service.CommentService;
+import com.limhaekyu.boardproject.service.ExcelGenerator;
+
+import lombok.extern.log4j.Log4j;
 
 @Controller
+@Log4j
 public class BoardController {
 
 	private final BoardService boardService;
 	private final CommentService commentService;
-
+	
 	@Autowired
 	public BoardController(BoardService boardService, CommentService commentService) {
 		this.boardService = boardService;
@@ -64,9 +75,9 @@ public class BoardController {
 		return "page/writeBoard";
 	}
 	
+
 	@PostMapping(value = "/board/write", produces="application/json;charset=UTF-8")
 	public String writeBoard(@RequestBody BoardDto boardDto, Model model, HttpServletResponse response) {
-		
 		Map<String, String> errors = new HashMap<>();
 		
 		if (boardService.validateWord(boardDto.getTitle())) {
@@ -83,14 +94,7 @@ public class BoardController {
 			response.addHeader("bad-word-contents", "1");
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
-/*
-		if (!boardService.chkCoolTimeWriteBoard()) {
-			response.addHeader("cooltime", "1");
-			errors.put("cooltime", "60초가 지나지 않았습니다.");
-		} else {
-			response.addHeader("cooltime", "0");
-		}
-*/
+
 		// 검증에 실패하면 다시 입력 폼으로
 		if (!errors.isEmpty()) {
 			return "page/writeBoard";
@@ -101,6 +105,7 @@ public class BoardController {
 		}
 
 	}
+
 	@GetMapping("/board/{id}/reply")
 	public String viewReplyBoard(@PathVariable(value="id") Long id, Model model) {
 		model.addAttribute("id", id);
@@ -216,5 +221,30 @@ public class BoardController {
 		commentService.deleteComment(boardId, commentId);
 		return "redirect:/board/{id}";
 
+	}
+	
+	@GetMapping("excel/download")
+	public ResponseEntity<byte[]> excelDownload(@RequestParam(name="type", required=false) String type, @RequestParam(name="keyword", required=false) String keyword, HttpServletResponse response) throws IOException {
+		List<BoardDto> boardList = new ArrayList<>();
+		if (keyword != null) {
+			boardList = boardService.searchBoardListNoPaging(type, keyword);
+		} else {
+			boardList = boardService.selectBoardListNoPaging();
+		}
+		Workbook workbook = ExcelGenerator.generateExcel(boardList);
+		
+		byte[] excelBytes = null;
+		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			workbook.write(outputStream);
+			excelBytes = outputStream.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setContentDispositionFormData("attachment", "boardList.xlsx");
+		
+		return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
 	}
 }
