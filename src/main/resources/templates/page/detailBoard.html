@@ -49,15 +49,19 @@
 						<td style="white-space: pre-wrap" class="col-md-9"
 							th:text="${boardInfo.contents}"></td>
 					</tr>
-					<tr>
-						<th class="col-md-2">첨부 파일</th>
-						<td style="white-space: pre-wrap" class="col-md-9" th:each="file : ${fileList}">
-							
-							<button onclick="">download</button>
-						</td>
-					</tr>
 				</tbody>
 			</table>
+			<hr/>
+			<div style="display:flex; ">
+				<div>
+					<span><b>첨부 파일</b></span>
+				</div>
+				<div style="margin: 0 auto;">
+					<div th:each="file : ${fileList}" >
+						<a th:href="@{/download(id = ${file.id})}" th:text="${file.originalName}"></a>
+					</div>
+				</div>
+			</div>
 			<!-- 수정/삭제 -->
 			<div class="btn_wrap text-center">
 				<div>

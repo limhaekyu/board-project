@@ -58,5 +58,10 @@ public class FileService {
 
 	public List<FileDto> findFileByBoardId(Long boardId) {
 		return fileMapper.findFileByBoardId(boardId);
+		
+	}
+	
+	public String findSavedPathById(Long id) {
+		return fileMapper.findSavedPathById(id);
 	}
 }

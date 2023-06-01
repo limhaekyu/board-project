@@ -12,4 +12,6 @@ public interface FileMapper {
 	void saveFile(FileDto file);
 
 	List<FileDto> findFileByBoardId(Long boardId);
+
+	String findSavedPathById(Long id);
 }

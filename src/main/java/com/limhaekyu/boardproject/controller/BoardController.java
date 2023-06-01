@@ -1,6 +1,10 @@
 package com.limhaekyu.boardproject.controller;
 
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -285,6 +289,28 @@ public class BoardController {
 			}
 		}
 		return "redirect:/";
+	}
+	
+	@GetMapping("/download")
+	public void download(@RequestParam(value="id") Long id, HttpServletResponse response) throws IOException {
+		String filePath = fileService.findSavedPathById(id);
+		
+		File file = new File(filePath);
+	    if (file.exists()) {
+	        response.setContentType("application/octet-stream");
+	        response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+	        try (InputStream inputStream = new FileInputStream(file);
+	             OutputStream outputStream = response.getOutputStream()) {
+	            byte[] buffer = new byte[1024];
+	            int length;
+	            while ((length = inputStream.read(buffer)) != -1) {
+	                outputStream.write(buffer, 0, length);
+	            }
+	            outputStream.flush();
+	        }
+	    } else {
+	        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+	    }
 	}
 	
 	@PostMapping("/test")

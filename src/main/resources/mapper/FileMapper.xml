@@ -14,7 +14,13 @@
 	
 	<select id="findFileByBoardId"
 		resultType="com.limhaekyu.boardproject.dto.FileDto">
-		select * from tb_file where board_id = #{boardId}
+		select id, original_name, saved_name, file_size, board_id, saved_at
+  		from tb_file
+  		where board_id = #{boardId}
+		
 	</select>
 	
+	<select id="findSavedPathById" resultType="String">
+		select saved_path from tb_file where id = #{id}
+	</select>
 </mapper>
