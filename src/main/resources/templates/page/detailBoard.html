@@ -24,9 +24,10 @@
 		</div>
 
 		<div class="starter-template">
-			<input type="hidden" id="idDeleted" name="idDeleted" th:value="${boardInfo.isDeleted}">
-			<input type="hidden" id="id" name="id" th:value="${boardInfo.id}">
-			<input type="hidden" id="password" name="password"
+			<input type="hidden" id="idDeleted" name="idDeleted"
+				th:value="${boardInfo.isDeleted}"> <input type="hidden"
+				id="id" name="id" th:value="${boardInfo.id}"> <input
+				type="hidden" id="password" name="password"
 				th:value="${boardInfo.password}">
 
 			<table class="table table-fixed w-auto" style="width: 70%">
@@ -49,33 +50,32 @@
 						<td style="white-space: pre-wrap" class="col-md-9"
 							th:text="${boardInfo.contents}"></td>
 					</tr>
+					<tr>
+						<th class="col-md-2">첨부 파일</th>
+						<td>
+							<div style="text-align: left; display: flex; flex-direction: column; justify-content: center; margin: 0 auto;" th:each="file : ${fileList}">
+								<a th:href="@{/download(id = ${file.id})}"
+									th:text="${file.originalName}"></a>
+							</div>
+						</td>
+					</tr>
 				</tbody>
 			</table>
-			<hr/>
-			<div style="display:flex; ">
-				<div>
-					<span><b>첨부 파일</b></span>
-				</div>
-				<div style="margin: 0 auto;">
-					<div th:each="file : ${fileList}" >
-						<a th:href="@{/download(id = ${file.id})}" th:text="${file.originalName}"></a>
-					</div>
-				</div>
-			</div>
+			
 			<!-- 수정/삭제 -->
 			<div class="btn_wrap text-center">
 				<div>
 					<a class="btn btn-primary" onclick="viewReplyBoard()">답글달기</a> <a
 						class="btn btn-warning" onclick="deleteBoard()" id="delete-btn">삭제</a>
-					<a class="btn btn-primary" onclick="chkPassword()">수정</a>
-					<a th:href="@{'/'}" class="btn btn-primary"> 목록 </a>
+					<a class="btn btn-primary" onclick="chkPassword()">수정</a> <a
+						th:href="@{'/'}" class="btn btn-primary"> 목록 </a>
 				</div>
 			</div>
 
 
 			<!-- 댓글달기 -->
 			<br />
-			<div class="card" style="width: 80%; margin:auto;">
+			<div class="card" style="width: 80%; margin: auto;">
 				<div class="card-header">댓글</div>
 				<div class="commentWriter">
 					<label style="float: left" for="commentWriter"

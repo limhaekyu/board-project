@@ -15,6 +15,7 @@
 <th:block layout:fragment="script">
 	<script th:src="@{/js/page/editBoard.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </th:block>
 
@@ -102,7 +103,7 @@
 					<div class="col-sm-9" style="text-align: left; display: flex; flex-direction: column; justify-content: center; margin: 0 auto;">
 						<div th:each="file : ${fileList}">
 							<a th:href="@{/download(id = ${file.id})}"
-								th:text="${file.originalName}"></a>&emsp;<a class="badge btn-danger" href='#this'
+								th:text="${file.originalName}"><input type="hidden" th:value="${file.id}" name="fileId"></a>&emsp;<a class="badge btn-danger" href='#this'
 								name='file-delete'>삭제</a>
 						</div>
 					</div>
@@ -139,7 +140,7 @@
 			$(document).ready(function() {
 				$("a[name='file-delete']").on("click", function(e) {
 					e.preventDefault();
-					deleteFile($(this));
+					deleteInFile($(this));
 				});
 			})
 
@@ -154,6 +155,9 @@
 			}
 
 			function deleteFile(obj) {
+				obj.parent().remove();
+			}
+			function deleteInFile(obj) {
 				obj.parent().remove();
 			}
 		</script>

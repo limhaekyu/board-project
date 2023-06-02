@@ -1,10 +1,12 @@
 package com.limhaekyu.boardproject.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class PaginationDto {
 
 	// 페이지당 보여지는 게시물 수
@@ -87,29 +89,4 @@ public class PaginationDto {
     private void setOffset(final int page, final int rowCount) {
         this.offset = (page - 1) * rowCount;
     }
-
-	public int getTotalCount() {
-		return totalCount;
-	}
-	public int getPage() {
-		return page;
-	}
-	public int getStartPage() {
-		return startPage;
-	}
-	public int getEndPage() {
-		return endPage;
-	}
-	public int getTotalPageCount() {
-		return totalPageCount;
-	}
-	public boolean getIsPrev() {
-		return isPrev;
-	}
-	public boolean isNext() {
-		return isNext;
-	}
-	public int getOffset() {
-		return offset;
-	}
 }

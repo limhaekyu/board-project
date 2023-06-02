@@ -45,10 +45,7 @@ import com.limhaekyu.boardproject.service.CommentService;
 import com.limhaekyu.boardproject.service.ExcelGenerator;
 import com.limhaekyu.boardproject.service.FileService;
 
-import lombok.extern.log4j.Log4j;
-
 @Controller
-@Log4j
 public class BoardController {
 
 	private final BoardService boardService;

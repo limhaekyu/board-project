@@ -23,7 +23,7 @@ public class FileService {
 		this.fileMapper = fileMapper;
 	}
 	
-	
+	@Transactional
 	public void uploadFile(List<MultipartFile> files, Long boardId) {
 		String uploadPath = "C:"+File.separator+"file";
 		for (MultipartFile file : files) {
