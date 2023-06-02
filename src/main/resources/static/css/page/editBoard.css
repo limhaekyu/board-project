@@ -21,3 +21,13 @@ main {
 	width: 60%;
 	justify-content: center;
 }
+
+input[type="file"] {
+    padding: 6px;
+    max-width: 100%;
+}
+.multiple-upload {
+	
+	text-align: center;
+	justify-content: center;
+}

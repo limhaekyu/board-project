@@ -87,39 +87,63 @@ public class BoardController {
 		model.addAttribute("boardDto", new BoardDto());
 		return "page/writeBoard";
 	}
-	
 
 	@PostMapping(value = "/board/write", produces="application/json;charset=UTF-8")
 	public String writeBoard(BoardDto boardDto, HttpServletResponse response) {
+		String title = boardDto.getTitle();
+		String writer = boardDto.getWriter();
+		String password = boardDto.getPassword();
+		String contents = boardDto.getContents();
+		
+		MultipartFile[] files = boardDto.getFile();
+		List<MultipartFile> fileList = new ArrayList<>();
+		for(int i=0; i < files.length; i++) {
+			if (files[i].getSize() != 0) {
+				fileList.add(files[i]);
+			}
+		}
+		
 		Map<String, String> errors = new HashMap<>();
-		
-		if (boardService.validateWord(boardDto.getTitle())) {
+		if (boardService.validateWord(title)) {
 			response.addHeader("bad-word-title", "1");
+
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
 		
-		if (boardService.validateWord(boardDto.getWriter())) {
+		if (boardService.validateWord(writer)) {
 			response.addHeader("bad-word-writer", "1");
+
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
 
-		if (boardService.validateWord(boardDto.getContents())) {
+		if (boardService.validateWord(contents)) {
 			response.addHeader("bad-word-contents", "1");
-			errors.put("contents", "비속어가 감지되었습니다.");
-		}
 
+			errors.put("contents", "비속어가 감지되었습니다.");
+		} if (boardService.chkNullText(title) || boardService.chkNullText(writer)
+				|| boardService.chkNullText(password) || boardService.chkNullText(contents)) {
+			response.addHeader("null-text", "1");
+
+			errors.put("contents", "빈 텍스트가 발견되었습니다.");
+		}
+		
 		// 검증에 실패하면 다시 입력 폼으로
 		if (!errors.isEmpty()) {
+
 			return "page/writeBoard";
 		} else {
 			// 성공 로직
-			boardService.writeBoard(boardDto);;
-			fileService.uploadFile(boardDto.getFiles(), boardDto.getId());
+			boardService.writeBoard(boardDto);
+			if (files.length > 0) {
+				fileService.uploadFile(fileList, boardDto.getId());
+			}
 			return "redirect:/";
 		}
 
 	}
+	
 
+	
 	@GetMapping("/board/{id}/reply")
 	public String viewReplyBoard(@PathVariable(value="id") Long id, Model model) {
 		model.addAttribute("id", id);
@@ -184,43 +208,107 @@ public class BoardController {
 	@GetMapping("/board/{id}/edit")
 	public String viewEditBoard(@PathVariable(value = "id") Long id, Model model) {
 		BoardDto boardInfo = boardService.selectBoardDetail(id);
+		List<FileDto> fileList = fileService.findFileByBoardId(id);
+		model.addAttribute("fileList", fileList);
 		model.addAttribute("boardInfo", boardInfo);
 		return "page/editBoard";
 	}
+//
+//	@PostMapping("/board/{id}/edit")
+//	public String editBoard(@PathVariable(value = "id") Long id, @RequestBody BoardDto boardDto, Model model, HttpServletResponse response) {
+//		// 검증 오류 결과를 보관
+//		Map<String, String> errors = new HashMap<>();
+//		boardDto.setId(id);
+//		// 단순 검증 로직
+//		if (boardService.validateWord(boardDto.getTitle())) {
+//			response.addHeader("bad-word-title", "1");
+//			errors.put("contents", "비속어가 감지되었습니다.");
+//		}
+//		
+//		if (boardService.validateWord(boardDto.getWriter())) {
+//			response.addHeader("bad-word-writer", "1");
+//			errors.put("contents", "비속어가 감지되었습니다.");
+//		}
+//
+//		if (boardService.validateWord(boardDto.getContents())) {
+//			response.addHeader("bad-word-contents", "1");
+//			errors.put("contents", "비속어가 감지되었습니다.");
+//		}
+//		if (boardDto.getPasswordAfter() != null) {
+//			if (!boardService.validPassword(boardDto)) {
+//				response.addHeader("valid-pw", "1");
+//				errors.put("valid_pw", "비밀번호가 틀렸습니다.");
+//			}		
+//		}
+//		// 검증에 실패하면 다시 입력 폼으로
+//		if (!errors.isEmpty()) {
+//			model.addAttribute("boardInfo", boardDto);
+//			return "page/editBoard";
+//		} else {
+//			// 성공 로직
+//			boardService.editBoard(boardDto);
+//			return "redirect:/board/{id}";
+//		}
+//	}
+//	
+	
 
 	@PostMapping("/board/{id}/edit")
-	public String editBoard(@PathVariable(value = "id") Long id, @RequestBody BoardDto boardDto, Model model, HttpServletResponse response) {
+	public String editBoard(@PathVariable(value = "id") Long id, BoardDto boardDto, Model model, HttpServletResponse response) {
+		
+		MultipartFile[] files = boardDto.getFile();
+		List<MultipartFile> fileList = new ArrayList<>();
+		for(int i=0; i < files.length; i++) {
+			if (files[i].getSize() != 0) {
+				fileList.add(files[i]);
+			}
+		}
 		// 검증 오류 결과를 보관
 		Map<String, String> errors = new HashMap<>();
 		boardDto.setId(id);
 		// 단순 검증 로직
+
 		if (boardService.validateWord(boardDto.getTitle())) {
 			response.addHeader("bad-word-title", "1");
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
-		
+
+
 		if (boardService.validateWord(boardDto.getWriter())) {
 			response.addHeader("bad-word-writer", "1");
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
 
+
+
 		if (boardService.validateWord(boardDto.getContents())) {
 			response.addHeader("bad-word-contents", "1");
 			errors.put("contents", "비속어가 감지되었습니다.");
 		}
+
+		
 		if (boardDto.getPasswordAfter() != null) {
 			if (!boardService.validPassword(boardDto)) {
 				response.addHeader("valid-pw", "1");
 				errors.put("valid_pw", "비밀번호가 틀렸습니다.");
 			}		
 		}
+
+
 		// 검증에 실패하면 다시 입력 폼으로
 		if (!errors.isEmpty()) {
+
 			model.addAttribute("boardInfo", boardDto);
 			return "page/editBoard";
 		} else {
 			// 성공 로직
 			boardService.editBoard(boardDto);
+
+			if(files.length > 0) {
+				fileService.uploadFile(fileList, id);
+			}
+
+
 			return "redirect:/board/{id}";
 		}
 	}
@@ -263,12 +351,7 @@ public class BoardController {
 		return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
 	}
 	
-	@GetMapping("/test")
-	public String testBoard(Model model) {
-		model.addAttribute("boardDto", new BoardDto());
-		return "/page/testWriteBoard2";
-	}
-	
+
 	@PostMapping("/upload")
 	public String upload( @RequestParam("files") MultipartFile[] files) {
 		String uploadPath = "C:/file";
@@ -313,10 +396,12 @@ public class BoardController {
 	    }
 	}
 	
-	@PostMapping("/test")
-	public String testUpload(BoardDto boardDto) {
-		boardService.writeBoard(boardDto);;
-		fileService.uploadFile(boardDto.getFiles(), boardDto.getId());
-		return "redirect:/";
+	@GetMapping("/test")
+	public String testBoard(Model model) {
+		model.addAttribute("boardDto", new BoardDto());
+		return "/page/testWriteBoard";
 	}
+	
+	
+	
 }

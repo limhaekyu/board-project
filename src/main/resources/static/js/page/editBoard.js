@@ -74,16 +74,14 @@ function submitEditBoard() {
 		alert("변경할 비밀번호를 입력해주세요.");
 		passwordAfter.focus();
 	} else if (passwordBefore.value !="" && passwordAfter.value != "") {
+		var myForm = document.getElementById('formInfo');
+		
+		var formData = new FormData(myForm);
+
 		axios({
 			method: 'post',
 			url: '/board/'+id.value+'/edit',
-			data: {
-				title: title.value,
-				writer: writer.value,
-				passwordBefore : passwordBefore.value,
-				passwordAfter : passwordAfter.value,
-				contents: contents.value
-			}
+			data: formData
 		})
 		.then(function(response) {
 			console.log(response);
@@ -110,14 +108,13 @@ function submitEditBoard() {
 		})
 	}
 	else {
+		var myForm = document.getElementById('formInfo');
+		
+		var formData = new FormData(myForm);
 		axios({
 			method: 'post',
 			url: '/board/'+id.value+'/edit',
-			data: {
-				title: title.value,
-				writer: writer.value,
-				contents: contents.value
-			}
+			data: formData
 		})
 		.then(function(response) {
 			console.log(response);

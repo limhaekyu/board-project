@@ -23,7 +23,11 @@ public class BoardService {
 
 	@Transactional
 	public void writeBoard(BoardDto boardDto) {
-		boardMapper.writeBoard(boardDto);
+		try {
+			boardMapper.writeBoard(boardDto);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<BoardDto> selectBoardList(PaginationDto paginationDto) {
@@ -36,20 +40,27 @@ public class BoardService {
 
 	@Transactional
 	public void deleteBoard(Long id) {
-		boardMapper.deleteBoard(id);
+		try {
+			boardMapper.deleteBoard(id);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Transactional
 	public void editBoard(BoardDto boardDto) {
-		if (boardDto.getPasswordAfter() != null) {
-			boardMapper.editBoardPw(boardDto);
-		} else {
-			boardMapper.editBoard(boardDto);	
+		try {
+			if (boardDto.getPasswordAfter() != null) {
+				boardMapper.editBoardPw(boardDto);
+			} else {
+				boardMapper.editBoard(boardDto);	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	public List<BoardDto> searchBoardList(Criteria criteria, PaginationDto paginationDto) {
-		
 		return boardMapper.searchBoardList(criteria, paginationDto);
 	}
 
@@ -132,5 +143,12 @@ public class BoardService {
 		return boardMapper.selectBoardListNoPaging();
 	}
 	
+	public boolean chkNullText(String text) {
+		if (text == null || text == "" || text.isBlank() || text.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }

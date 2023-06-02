@@ -1,6 +1,7 @@
 package com.limhaekyu.boardproject.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +27,8 @@ public class BoardDto {
 	private Integer step;	// 원글 그룹에서의 순번 
 	private Integer depth;	// 계층의 깊이 ( 원글 0, 답글 1, 답글에답글 2)
 	private Integer commentCnt;
-	private MultipartFile[] files;
+	private MultipartFile[] file;
+	private List<MultipartFile> fileList;
 	
 	public BoardDto(String title, String writer, String password, String contents) {
 		this.title = title;
@@ -166,11 +168,19 @@ public class BoardDto {
 		this.commentCnt = commentCnt;
 	}
 
-	public MultipartFile[] getFiles() {
-		return files;
+	public MultipartFile[] getFile() {
+		return file;
 	}
 
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
+	public void setFile(MultipartFile[] file) {
+		this.file = file;
+	}
+
+	public List<MultipartFile> getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(List<MultipartFile> fileList) {
+		this.fileList = fileList;
 	}
 }

@@ -23,7 +23,8 @@ public class FileService {
 		this.fileMapper = fileMapper;
 	}
 	
-	public void uploadFile(MultipartFile[] files, Long boardId) {
+	
+	public void uploadFile(List<MultipartFile> files, Long boardId) {
 		String uploadPath = "C:"+File.separator+"file";
 		for (MultipartFile file : files) {
 			String originalName = file.getOriginalFilename();

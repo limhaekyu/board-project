@@ -47,6 +47,7 @@ function checkInputPassword() {
 	}
 }
 
+
 function submitWriteBoard() {
 	var title = document.getElementById("title");
 	var writer = document.getElementById("writer");
@@ -65,80 +66,14 @@ function submitWriteBoard() {
 	} else if (contents.value == "") {
 		alert("내용을 입력해주세요.");
 		contents.focus();
-	}
-	else {
-		axios({
-			method: 'post',
-			url: '/board/write',
-			data: {
-				title: title.value,
-				writer: writer.value,
-				password: password.value,
-				contents: contents.value
-			}
-		})
-			.then(function(response) {
-				console.log(response);
-				if (response.headers["bad-word-title"] == "1") {
-					alert("제목란에 비속어가 감지되었습니다.");
-					title.focus();
-				} else if(response.headers["bad-word-writer"] == "1") {
-					alert("작성자란에 비속어가 감지되었습니다.")
-					writer.focus();
-				} else if (response.headers["bad-word-contents"] == "1") {
-					alert("내용란에 비속어가 감지되었습니다.")
-					contents.focus();
-				}
-				/*} else if(response.headers["cooltime"] == "1") {
-					alert("게시글 생성 후 60초 뒤에 생성이 가능합니다.");
-				} */else {
-					window.location.href = response.request.responseURL;
-				}
-			})
-			.catch(function(error) {
-				console.log(error);
-			})
-	}
-}
-
-function testSubmitWriteBoard() {
-	var title = document.getElementById("title");
-	var writer = document.getElementById("writer");
-	var password = document.getElementById("password");
-	var contents = document.getElementById("contents");
+	} else {
+		var myform = document.getElementById('formInfo');
 	
-	var files = document.getElementById('uploadFiles').files;
-	var formData = new FormData();
-	
-	for (var i = 0; i < files.length; i++) {
-		formData.append('files', files[i]);
-	}
-	
-	if (title.value == "") {
-		alert("제목을 입력해주세요.");
-		title.focus();
-	} else if (writer.value == "") {
-		alert("작성자를 입력해주세요.");
-		writer.focus();
-	} else if (password.value == "") {
-		alert("비밀번호를 입력해주세요.");
-		password.focus();
-	} else if (contents.value == "") {
-		alert("내용을 입력해주세요.");
-		contents.focus();
-	}
-	else {
-		formData.append('title', title.value);
-		formData.append('writer', writer.value);
-		formData.append('password', password.value);
-		formData.append('contents', contents.value);
+		var formData = new FormData(myform);
 		
 		axios({
 			method: 'post',
 			url: '/board/write',
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
 			data: formData
 		})
 			.then(function(response) {
@@ -152,10 +87,7 @@ function testSubmitWriteBoard() {
 				} else if (response.headers["bad-word-contents"] == "1") {
 					alert("내용란에 비속어가 감지되었습니다.")
 					contents.focus();
-				}
-				/*} else if(response.headers["cooltime"] == "1") {
-					alert("게시글 생성 후 60초 뒤에 생성이 가능합니다.");
-				} */else {
+				}else {
 					window.location.href = response.request.responseURL;
 				}
 			})
@@ -164,7 +96,7 @@ function testSubmitWriteBoard() {
 			})
 	}
 }
-
+/*
 var multipleUploadForm = document.querySelector('#multipleUploadForm');
 var multipleFileUploadInput = document.querySelector('#multipleFileUploadInput');
 var multipleFileUploadError = document.querySelector('#multipleFileUploadError');
@@ -209,3 +141,4 @@ multipleUploadForm.addEventListener('submit', function(event){
     event.preventDefault();
 }, true);
 
+*/
